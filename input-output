@@ -119,19 +119,65 @@ inputoutputtable$finaldemand
 
 ### That is, a demand of 350 from Agriculture and 1700 from manufacturing. 
 
-### If the demand from manufacturing drops to 1000. How much total output from 
+### If the demand from manufacturing drops to 1500 and agricultural demand increases to 600. How much total output from 
 ### the two sectors is necessary to meet this demand. 
 
-newdemand <- c(350,1000)
+newdemand <- c(600,1500)
 
-newoutput <- round(L %*% newdemand)
+newoutput <- round(L %*% newdemand, digits=2)
 
 newoutput
-#    [,1]
-#[1,]  769
-#[2,] 1215
+#        [,1]
+#[1,] 1247.52
+#[2,] 1841.58
+
+newoutput <- as.vector(newoutput)
+
+(newoutput[1] - totaloutput[1]) / totaloutput[1]
+#[1] 0.24752
+
+(newoutput[2] - totaloutput[2]) / totaloutput[2]
+#[1] -0.07921
 
 ### That is that output for agriculture drops by 23.1% and manufacturing output
 ### falls by 39.3%. 
+
+### Based on these new final output changes we can reconstruct the intersectoral 
+### flows
+
+newoutput.hat <- newoutput*diag(2)
+
+newflowtable <- A%*%newoutput.hat
+#        [,1]    [,2]
+#[1,] 187.128 460.395
+#[2,] 249.504  92.079
+
+### In addition we can introduce the payments sector, these are services paid for 
+### by individual sectors and represents labour, government services, interest, 
+### rent, profit and so on. 
+
+### This is calculated as the difference between total outputs and industry
+### inputs for each sector.
+
+payment_sector <- newoutput - colSums(newflowtable)
+
+### The change in total demand for each sector is the following,
+
+delta.f <- newdemand - inputoutputtable$finaldemand
+
+### the change in intersectoral flows is given by;
+
+### Lf^1 - Lf^0 = L%*%delta.f
+
+delta.x <- L%*%delta.f
+
+### another way of getting to the newoutput figures is by;
+
+x.1 <- totaloutput + delta.x
+
+
+
+
+
 
 
