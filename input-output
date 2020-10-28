@@ -1,0 +1,137 @@
+### This example is taken from Miller and Blair (1985)
+
+### Example 1
+
+### Suppose a simple economy has two sectors, agriculture and manufacturing
+
+### Agriculture produces $150 value to satisfy its own need, and $500 
+### to satisfy manufacturing
+
+### Manufacturing produces $100 value for its own need, and $200 for
+### Agriculture.
+
+### Placing this into a sector flow 
+
+### Intermediate flow matrix.
+
+flowtable <- rbind( c( 150 , 500 ), c( 200 , 100 ) )
+
+flowtable
+#     [,1] [,2]
+#[1,]  150  500
+#[2,]  200  100
+
+### row 1 represents the output from Agriculture, which contributes as an
+### input to column 1 (Agriculture) and column 2 (Manufacturing).
+
+### In addition to meeting the needs of other areas of the economy
+### sectors must also satisfy a consumption demand. Which for each
+### sector is the following;
+
+D <- rbind (350,1700)
+D
+#     [,1]
+#[1,]  350
+#[2,] 1700
+
+### That is $350 of Agriculture product and $1700 of Manufacturing
+
+inputoutputtable <- cbind(flowtable, D)
+inputoutputtable <- as.data.frame(inputoutputtable)
+names( inputoutputtable ) <- c("x1" , "x2" , "finaldemand")
+
+### This means that both sectors must meet a total output which is the sum
+### of each of these.
+
+inputoutputtable$totaloutput <- inputoutputtable$x1 +
+                                inputoutputtable$x2 +
+                                inputoutputtable$finaldemand
+
+inputoutputtable
+#   x1  x2 finaldemand totaloutput
+#1 150 500         350        1000
+#2 200 100        1700        2000
+
+
+totaloutput <- inputoutputtable$totaloutput
+
+### Now we derive the technical coefficient matrix. A column of this matrix 
+### represents an industrial recipe used to produce a single industry good.
+
+### We calculate this matrix by dividing intersectoral flows by the total output 
+### of each columns sector. 
+
+### For instance, Agriculture ships $500 worth of goods to Manufacturing. 
+### Manufacturing produces $2000 of total output. Therefore, one dollar of 
+### Agricultural product is absorbed to produce 25 cents of Manufacturing
+### product.
+
+### Agriculture ships $500 to Manufacturing, Manufacturing produces $2000 
+### overall. Thefore, $500/$2000 = $0.25
+
+### We cant divide matrices in the way we do in usual arithmetic. So we must
+### solve the matrix first (find its inverse) and then multiply to obtain the
+### comparable result. 
+
+## Calcate coefficient matrix:
+z <- ( totaloutput )^-1 * diag( 2 )
+A <- flowtable %*% z
+
+# Show A
+A
+#     [,1] [,2]
+#[1,] 0.15 0.25
+#[2,] 0.20 0.05
+
+### A shows that to produce the total output of Manufacturing (column 2), 
+### it requires 25% of Agricultures total output and 5% of Manufacturing 
+### total output.
+
+### Equally, 15% of Agricultures output goes back into Agriculture as an input
+### and 20% of Manufacturings output is required back in Agriculture.
+
+### The next step in understanding the network effect and interdependency of
+### industries is to calculate the Leontief matrix. 
+
+### First we substract the technical coefficient matrix from the identity matrix.
+
+IminusA <- diag(2) - A
+
+### Calculate the inverse
+
+L <- solve(IminusA)
+
+L
+#          [,1]     [,2]
+#[1,] 1.2541254 0.330033
+#[2,] 0.2640264 1.122112
+
+### This new matrix presents a multiplyer of the relationships between the sectors
+### because of the total demand from both. 
+
+### We can now answer the question, how much does each sector need to produce
+### if there is a demand shock. 
+
+### Current total demand for both sectors is given by the following vector,
+
+inputoutputtable$finaldemand
+#[1]  350 1700
+
+### That is, a demand of 350 from Agriculture and 1700 from manufacturing. 
+
+### If the demand from manufacturing drops to 1000. How much total output from 
+### the two sectors is necessary to meet this demand. 
+
+newdemand <- c(350,1000)
+
+newoutput <- round(L %*% newdemand)
+
+newoutput
+#    [,1]
+#[1,]  769
+#[2,] 1215
+
+### That is that output for agriculture drops by 23.1% and manufacturing output
+### falls by 39.3%. 
+
+
