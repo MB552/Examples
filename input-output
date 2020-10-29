@@ -175,6 +175,70 @@ delta.x <- L%*%delta.f
 
 x.1 <- totaloutput + delta.x
 
+### Suppose the base-year employment in each sector dvided by that sectors's
+### base-year gross output, x1 and x2.
+
+e.hat.prime = cbind(c(0.30, 0),c(0, 0.25))
+
+### The value of labour inputs purchased by the two sectors
+
+epsilon = e.hat.prime %*%newoutput
+
+### Suppose some heterogeneity in labour employment purchased by Agriculture 
+### and Manufacturing. 
+
+P = cbind(c(0,0.6,0.4),c(0.8,0.2,0))
+#     [,1] [,2]
+#[1,]  0.0  0.8
+#[2,]  0.6  0.2
+#[3,]  0.4  0.0
+
+### Column 1 and 2 represent the proportion of labour types (rows)
+### employed in Agriculture and Manufacturing respectively. The rows
+### correspond to engineers, bankers and farmers.
+
+### So for instance, in P, 80% of manufacturing input is from engineers. 
+
+epsilon <- as.vector(epsilon)
+
+epsilon.hat <- epsilon*diag(2)
+
+### Quick review of matrix multiplication; in order to multiply and m*n
+### matrix by an n*q matrix; the n's must equal one another. 
+
+### epsilon.hat%*%P
+### (2*2)%*%(3*2)
+
+### P%*%epsilon.hat
+### (3*2)%*%(2*2)
+
+epsilon.tilda <- round(P%*%epsilon.hat, digits=2)
+
+### Economy wide employment of each job role is given by;
+
+Pepsilon <- round(P%*%rowSums(epsilon.hat), digits=2)
+
+### A wide variety of input coefficients can be constructed in this way.
+
+### Example 2
+
+### Consider the same economy, whose 2x2 technical coefficients matrix is given by;
+
+A
+#    [,1] [,2]
+#[1,] 0.15 0.25
+#[2,] 0.20 0.05
+
+### and the project demand vector (f) is given by;
+
+newdemand
+#[1]  600 1500
+
+### We will attempt to solve the problem in a more intuitive way this time;
+
+### If we anticipate these final demands on the respective sectors, they can
+### not get away with producing less than these amounts.
+
 
 
 
