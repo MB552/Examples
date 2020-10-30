@@ -239,8 +239,40 @@ newdemand
 ### If we anticipate these final demands on the respective sectors, they can
 ### not get away with producing less than these amounts.
 
+### Nor can each sector just produce 600 and 1500 since each sector requires an
+### input from both itself and the other sector in the economy to function. 
 
+### While the Agricultural sector needs to produce 600, in order to achieve this
+### it must take 15% from itself, and 20% from Manufacturing;
 
+### Similarly, the Manufacturing sector has the same issue. We can construct
+### the demands, under these circumstances, from the respective sectors as inputs
+### by using the technical coefficient matrix, A.
+
+### The required inputs from Agriculture and Manufacturing in order to produce
+### the necessary units of Agriculture are as follows;
+
+newdemand[1]*A[,1]
+
+### And for Manufacturing;
+
+newdemand[2]*A[,2]
+
+### That is in order to meet final demand Agriculture needs to produce an extra
+
+(newdemand[1]*A[,1])[1]+(newdemand[2]*A[,2])[1]
+#[1] 465
+
+### and Manufacturing;
+
+(newdemand[1]*A[,1])[2]+(newdemand[2]*A[,2])[2]
+#[1] 195
+
+### This extra 465 and 195 from Agriculture and Manufacturing respectively, results
+### in a further required input from both sectors respectively. This leads to 
+### a series of demands required from both sectors, which grow infintesimally 
+### smaller with each subsequent round. This is referred to as round-by-round 
+### impacts.
 
 
 
